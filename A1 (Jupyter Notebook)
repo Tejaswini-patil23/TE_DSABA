@@ -1,0 +1,60 @@
+# 1️⃣ Import Required Libraries
+import pandas as pd
+import numpy as np
+
+# 2️⃣ Load Dataset into Pandas DataFrame
+df = pd.read_csv("train.csv")  # Make sure train.csv is in your working directory
+
+# 3️⃣ Display first few rows
+df.head()
+
+# 4️⃣ Check Dimensions
+print("Shape of DataFrame:", df.shape)
+
+# 5️⃣ Check Column Names
+print("Columns:", df.columns)
+
+# 6️⃣ Check Missing Values
+print("Missing values per column:\n", df.isnull().sum())
+
+# 7️⃣ Initial Statistics
+print(df.describe())
+
+# 8️⃣ Dataset Info
+df.info()
+
+# 9️⃣ Check Data Types
+print(df.dtypes)
+
+# 1️⃣0️⃣ Convert Certain Columns to Correct Data Types
+df['Survived'] = df['Survived'].astype('category')
+df['Pclass'] = df['Pclass'].astype('category')
+
+# 1️⃣1️⃣ Handle Missing Values
+df['Age'].fillna(df['Age'].mean(), inplace=True)        # Fill missing Age with mean
+df['Embarked'].fillna('Unknown', inplace=True)          # Fill missing Embarked with 'Unknown'
+df.drop(columns=['Cabin'], inplace=True)                # Drop Cabin (too many missing values)
+
+# 1️⃣2️⃣ Verify Missing Values After Cleaning
+print("Missing values after cleaning:\n", df.isnull().sum())
+
+# 1️⃣3️⃣ Convert Categorical Columns to Quantitative
+
+# Example: Sex (if it has valid values)
+if df['Sex'].notnull().any():  # Only map if there is at least one non-NaN value
+    df['Sex'] = df['Sex'].map({'male': 0, 'female': 1})
+else:
+    df['Sex'] = df['Sex'].fillna(0.5)  # Placeholder if all NaN
+
+# Example: Embarked
+df['Embarked'] = df['Embarked'].map({'C': 0, 'Q': 1, 'S': 2, 'Unknown': 3})
+
+# 1️⃣4️⃣ Optional: One-Hot Encoding Alternative for Embarked
+# df = pd.get_dummies(df, columns=['Embarked'], drop_first=True)
+
+# 1️⃣5️⃣ Final Check
+df.head()
+df.dtypes
+
+# 1️⃣6️⃣ Save Cleaned Dataset (Optional)
+df.to_csv("titanic_cleaned.csv", index=False)
